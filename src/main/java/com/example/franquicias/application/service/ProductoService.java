@@ -16,10 +16,9 @@ public class ProductoService {
         this.sucursalRepository = sucursalRepository;
     }
 
-    public Producto agregarProducto(Long sucursalId, String nombre, Integer stock) {
-        Sucursal sucursal = sucursalRepository.findById(sucursalId)
-                .orElseThrow(() -> new RuntimeException("Sucursal no encontrada"));
-        Producto producto = new Producto(nombre, stock, sucursal);
+    public Producto agregarProducto(Long sucursalId, Producto producto) {
+        Sucursal sucursal = sucursalRepository.findById(sucursalId).orElseThrow();
+        producto.setSucursal(sucursal);
         return productoRepository.save(producto);
     }
 }
