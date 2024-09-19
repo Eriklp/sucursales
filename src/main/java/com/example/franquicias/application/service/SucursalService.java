@@ -16,10 +16,9 @@ public class SucursalService {
         this.franquiciaRepository = franquiciaRepository;
     }
 
-    public Sucursal agregarSucursal(Long franquiciaId, String nombre) {
-        Franquicia franquicia = franquiciaRepository.findById(franquiciaId)
-                .orElseThrow(() -> new RuntimeException("Franquicia no encontrada"));
-        Sucursal sucursal = new Sucursal(nombre, franquicia);
+    public Sucursal agregarSucursal(Long franquiciaId, Sucursal sucursal) {
+        Franquicia franquicia = franquiciaRepository.findById(franquiciaId).orElseThrow();
+        sucursal.setFranquicia(franquicia);
         return sucursalRepository.save(sucursal);
     }
 }
