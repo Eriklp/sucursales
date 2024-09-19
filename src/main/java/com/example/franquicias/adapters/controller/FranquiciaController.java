@@ -2,30 +2,27 @@ package com.example.franquicias.adapters.controller;
 
 import com.example.franquicias.application.service.FranquiciaService;
 import com.example.franquicias.domain.model.Franquicia;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/franquicias")
 public class FranquiciaController {
-    private final FranquiciaService franquiciaService;
 
-    public FranquiciaController(FranquiciaService franquiciaService) {
-        this.franquiciaService = franquiciaService;
-    }
+    @Autowired
+    private FranquiciaService franquiciaService;
 
     @PostMapping
-    public ResponseEntity<Franquicia> agregarFranquicia(@RequestBody Franquicia franquicia) {
-        Franquicia nuevaFranquicia = franquiciaService.agregarFranquicia(franquicia.getNombre());
-        return new ResponseEntity<>(nuevaFranquicia, HttpStatus.CREATED);
+    public Mono<ResponseEntity<Franquicia>> agregarFranquicia(@RequestBody Franquicia franquicia) {
+        return franquiciaService.agregarFranquicia(franquicia)
+                .map(ResponseEntity::ok);
     }
 
     @GetMapping
-    public ResponseEntity<List<Franquicia>> listarFranquicias() {
-        List<Franquicia> franquicias = franquiciaService.listarFranquicias();
-        return new ResponseEntity<>(franquicias, HttpStatus.OK);
+    public Flux<Franquicia> listarFranquicias() {
+        return franquiciaService.listarFranquicias();
     }
 }

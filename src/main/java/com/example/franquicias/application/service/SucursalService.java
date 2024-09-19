@@ -5,6 +5,8 @@ import com.example.franquicias.domain.model.Sucursal;
 import com.example.franquicias.domain.repository.FranquiciaRepository;
 import com.example.franquicias.domain.repository.SucursalRepository;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class SucursalService {
@@ -16,9 +18,12 @@ public class SucursalService {
         this.franquiciaRepository = franquiciaRepository;
     }
 
-    public Sucursal agregarSucursal(Long franquiciaId, Sucursal sucursal) {
+    public Mono<Sucursal> agregarSucursal(Long franquiciaId, Sucursal sucursal) {
         Franquicia franquicia = franquiciaRepository.findById(franquiciaId).orElseThrow();
         sucursal.setFranquicia(franquicia);
-        return sucursalRepository.save(sucursal);
+        return Mono.fromCallable(() -> sucursalRepository.save(sucursal));
+    }
+    public Flux<Sucursal> listarSucursalesPorFranquicia(Long franquiciaId) {
+        return Flux.defer(() -> Flux.fromIterable(sucursalRepository.findByFranquiciaId(franquiciaId)));
     }
 }

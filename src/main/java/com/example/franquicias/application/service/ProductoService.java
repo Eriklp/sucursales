@@ -4,35 +4,42 @@ import com.example.franquicias.domain.model.Producto;
 import com.example.franquicias.domain.model.Sucursal;
 import com.example.franquicias.domain.repository.ProductoRepository;
 import com.example.franquicias.domain.repository.SucursalRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class ProductoService {
-    private final ProductoRepository productoRepository;
-    private final SucursalRepository sucursalRepository;
 
-    public ProductoService(ProductoRepository productoRepository, SucursalRepository sucursalRepository) {
-        this.productoRepository = productoRepository;
-        this.sucursalRepository = sucursalRepository;
+    @Autowired
+    private ProductoRepository productoRepository;
+
+    @Autowired
+    private SucursalRepository sucursalRepository;
+
+    public Mono<Producto> agregarProducto(Long sucursalId, Producto producto) {
+        return Mono.fromCallable(() -> {
+            // Busca la sucursal por ID y establece la relación en el producto
+            Sucursal sucursal = sucursalRepository.findById(sucursalId)
+                    .orElseThrow(() -> new IllegalArgumentException("Sucursal no encontrada."));
+            producto.setSucursal(sucursal);
+            return productoRepository.save(producto);
+        });
     }
 
-    public Producto agregarProducto(Long sucursalId, Producto producto) {
-        Sucursal sucursal = sucursalRepository.findById(sucursalId).orElseThrow();
-        producto.setSucursal(sucursal);
-        return productoRepository.save(producto);
+    public Mono<Producto> modificarStock(Long sucursalId, Long productoId, int nuevoStock) {
+        return Mono.fromCallable(() -> {
+            return productoRepository.findByIdAndSucursalId(productoId, sucursalId)
+                    .map(producto -> {
+                        producto.setStock(nuevoStock);
+                        return productoRepository.save(producto);
+                    })
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado."));
+        });
     }
 
-    public Producto actualizarStockProducto(Long sucursalId, Long productoId, int nuevoStock) {
-        Producto producto = productoRepository.findByIdAndSucursalId(productoId, sucursalId)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado en la sucursal"));
-
-        producto.setStock(nuevoStock); // Actualizamos el stock
-        return productoRepository.save(producto);
-    }
-
-    public List<Producto> listarProductosPorSucursal(Long sucursalId) {
-        return productoRepository.findAllBySucursalId(sucursalId);
+    public Flux<Producto> listarProductosPorSucursal(Long sucursalId) {
+        return Flux.defer(() -> Flux.fromIterable(productoRepository.findAllBySucursalId(sucursalId)));
     }
 }
