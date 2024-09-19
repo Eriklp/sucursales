@@ -21,4 +21,12 @@ public class ProductoService {
         producto.setSucursal(sucursal);
         return productoRepository.save(producto);
     }
+
+    public Producto actualizarStockProducto(Long sucursalId, Long productoId, int nuevoStock) {
+        Producto producto = productoRepository.findByIdAndSucursalId(productoId, sucursalId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado en la sucursal"));
+
+        producto.setStock(nuevoStock); // Actualizamos el stock
+        return productoRepository.save(producto);
+    }
 }

@@ -17,5 +17,14 @@ public class ProductoController {
     public ResponseEntity<Producto> agregarProducto(@PathVariable Long sucursalId, @RequestBody Producto producto) {
         return ResponseEntity.ok(productoService.agregarProducto(sucursalId, producto));
     }
-}
 
+    // Nuevo método para actualizar el stock de un producto
+    @PutMapping("/{productoId}/stock")
+    public ResponseEntity<Producto> actualizarStockProducto(
+            @PathVariable Long sucursalId,
+            @PathVariable Long productoId,
+            @RequestParam int nuevoStock) {
+        Producto productoActualizado = productoService.actualizarStockProducto(sucursalId, productoId, nuevoStock);
+        return ResponseEntity.ok(productoActualizado);
+    }
+}
