@@ -23,6 +23,15 @@ public class SucursalService {
         sucursal.setFranquicia(franquicia);
         return Mono.fromCallable(() -> sucursalRepository.save(sucursal));
     }
+
+    public Mono<Sucursal> actualizarNombreSucursal(Long sucursalId, String nuevoNombre) {
+        return Mono.fromCallable(() -> sucursalRepository.findById(sucursalId))
+                .flatMap(optionalSucursal -> optionalSucursal.map(sucursal -> {
+                    sucursal.setNombre(nuevoNombre);
+                    return Mono.just(sucursalRepository.save(sucursal));
+                }).orElseGet(Mono::empty));
+    }
+
     public Flux<Sucursal> listarSucursalesPorFranquicia(Long franquiciaId) {
         return Flux.defer(() -> Flux.fromIterable(sucursalRepository.findByFranquiciaId(franquiciaId)));
     }

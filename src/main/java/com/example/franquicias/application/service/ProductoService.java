@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
+
 @Service
 public class ProductoService {
 
@@ -39,7 +41,23 @@ public class ProductoService {
         });
     }
 
+    public Mono<Producto> actualizarNombreProducto(Long sucursalId, Long productoId, String nuevoNombre) {
+        return Mono.fromCallable(() -> productoRepository.findByIdAndSucursalId(productoId, sucursalId))
+                .flatMap(optionalProducto -> optionalProducto.map(producto -> {
+                    producto.setNombre(nuevoNombre);
+                    return Mono.just(productoRepository.save(producto));
+                }).orElseGet(Mono::empty));
+    }
+
     public Flux<Producto> listarProductosPorSucursal(Long sucursalId) {
         return Flux.defer(() -> Flux.fromIterable(productoRepository.findAllBySucursalId(sucursalId)));
+    }
+
+    public Mono<Void> eliminarProducto(Long sucursalId, Long productoId) {
+        return Mono.fromCallable(() -> productoRepository.findByIdAndSucursalId(productoId, sucursalId))
+                .flatMap(optionalProducto -> optionalProducto.map(producto -> {
+                    productoRepository.delete(producto);
+                    return Mono.<Void>empty();
+                }).orElseGet(Mono::empty));
     }
 }

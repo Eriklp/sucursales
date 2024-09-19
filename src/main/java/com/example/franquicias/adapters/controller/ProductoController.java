@@ -31,4 +31,18 @@ public class ProductoController {
     public Flux<Producto> listarProductosPorSucursal(@PathVariable Long sucursalId) {
         return productoService.listarProductosPorSucursal(sucursalId);
     }
+
+    @DeleteMapping("/{productoId}")
+    public Mono<ResponseEntity<Void>> eliminarProducto(@PathVariable Long sucursalId, @PathVariable Long productoId) {
+        return productoService.eliminarProducto(sucursalId, productoId)
+                .map(r -> ResponseEntity.noContent().build());
+    }
+
+    @PatchMapping("/{productoId}/actualizar-nombre")
+    public Mono<ResponseEntity<Producto>> actualizarNombreProducto(@PathVariable Long sucursalId, @PathVariable Long productoId, @RequestParam String nuevoNombre) {
+        return productoService.actualizarNombreProducto(sucursalId, productoId, nuevoNombre)
+                .map(ResponseEntity::ok);
+    }
+
+
 }

@@ -25,4 +25,11 @@ public class SucursalController {
     public Flux<Sucursal> listarSucursales(@PathVariable Long franquiciaId) {
         return sucursalService.listarSucursalesPorFranquicia(franquiciaId);
     }
+
+    @PatchMapping("/{sucursalId}/actualizar-nombre")
+    public Mono<ResponseEntity<Sucursal>> actualizarNombreSucursal(@PathVariable Long sucursalId, @RequestParam String nuevoNombre) {
+        return sucursalService.actualizarNombreSucursal(sucursalId, nuevoNombre)
+                .map(ResponseEntity::ok);
+    }
+
 }

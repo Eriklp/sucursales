@@ -21,6 +21,14 @@ public class FranquiciaService {
         return Mono.fromCallable(() -> franquiciaRepository.save(franquicia));
     }
 
+    public Mono<Franquicia> actualizarNombreFranquicia(Long franquiciaId, String nuevoNombre) {
+        return Mono.fromCallable(() -> franquiciaRepository.findById(franquiciaId))
+                .flatMap(optionalFranquicia -> optionalFranquicia.map(franquicia -> {
+                    franquicia.setNombre(nuevoNombre);
+                    return Mono.just(franquiciaRepository.save(franquicia));
+                }).orElseGet(Mono::empty));
+    }
+
     public Flux<Franquicia> listarFranquicias() {
         return Flux.defer(() -> Flux.fromIterable(franquiciaRepository.findAll()));
     }
