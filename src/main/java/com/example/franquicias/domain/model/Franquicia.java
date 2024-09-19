@@ -25,4 +25,8 @@ public class Franquicia {
     public Franquicia(String nombre) {
         this.nombre = nombre;
     }
+    public Franquicia(String nombre, List<Sucursal> sucursales) {
+        this.nombre = nombre;
+        this.sucursales = sucursales;
+    }
 }
