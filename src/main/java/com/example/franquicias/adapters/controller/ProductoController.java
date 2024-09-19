@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/sucursales/{sucursalId}/productos")
 public class ProductoController {
@@ -18,7 +20,12 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.agregarProducto(sucursalId, producto));
     }
 
-    // Nuevo método para actualizar el stock de un producto
+    @GetMapping
+    public ResponseEntity<List<Producto>> listarProductosPorSucursal(@PathVariable Long sucursalId) {
+        List<Producto> productos = productoService.listarProductosPorSucursal(sucursalId);
+        return ResponseEntity.ok(productos);
+    }
+
     @PutMapping("/{productoId}/stock")
     public ResponseEntity<Producto> actualizarStockProducto(
             @PathVariable Long sucursalId,

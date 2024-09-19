@@ -6,6 +6,8 @@ import com.example.franquicias.domain.repository.ProductoRepository;
 import com.example.franquicias.domain.repository.SucursalRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductoService {
     private final ProductoRepository productoRepository;
@@ -28,5 +30,9 @@ public class ProductoService {
 
         producto.setStock(nuevoStock); // Actualizamos el stock
         return productoRepository.save(producto);
+    }
+
+    public List<Producto> listarProductosPorSucursal(Long sucursalId) {
+        return productoRepository.findAllBySucursalId(sucursalId);
     }
 }
