@@ -60,144 +60,222 @@ docker run -p 8080:8080 -e db_username=Admin -e db_password=Admin1234 franquicia
 ```
 ## Uso de la Aplicación
 
-### Endpoints
+A continuación se describen los endpoints disponibles para gestionar franquicias, sucursales y productos.
 
-#### Franquicia (Franchise)
+### Endpoints de FranquiciaController
 
-- **Agregar una nueva franquicia**:
-
-    ```http
-    POST /franquicia
-    ```
-
-  **Cuerpo de la solicitud**:
+- **Crear una franquicia**
+  - **Método**: `POST`
+  - **Endpoint**: `/franquicias`
+  - **Descripción**: Crea una nueva franquicia.
+  - **Cuerpo de la petición**:
     ```json
     {
-      "nombre": "Nombre de la Franquicia"
+      "nombre": "Franquicia A"
+    }
+    ```
+  - **Respuesta exitosa**:
+    ```json
+    {
+      "id": 1,
+      "nombre": "Franquicia A",
+      "sucursales": []
     }
     ```
 
-- **Obtener todas las franquicias**:
-
-    ```http
-    GET /franquicia
-    ```
-
-  **Respuesta**:
+- **Listar franquicias**
+  - **Método**: `GET`
+  - **Endpoint**: `/franquicias`
+  - **Descripción**: Lista todas las franquicias.
+  - **Respuesta**:
     ```json
     [
       {
         "id": 1,
-        "nombre": "Nombre de la Franquicia"
+        "nombre": "Franquicia A",
+        "sucursales": []
+      },
+      {
+        "id": 2,
+        "nombre": "Franquicia B",
+        "sucursales": []
       }
     ]
     ```
 
-- **Eliminar una franquicia por ID**:
-
-    ```http
-    DELETE /franquicia/{id}
-    ```
-
-#### Sucursal (Branch)
-
-- **Agregar una nueva sucursal**:
-
-    ```http
-    POST /sucursal
-    ```
-
-  **Cuerpo de la solicitud**:
+- **Actualizar el nombre de una franquicia**
+  - **Método**: `PATCH`
+  - **Endpoint**: `/franquicias/{franquiciaId}/actualizar-nombre`
+  - **Descripción**: Actualiza el nombre de una franquicia específica.
+  - **Parámetros**:
+    - `franquiciaId`: ID de la franquicia.
+    - **Query param**: `nuevoNombre`: El nuevo nombre de la franquicia.
+  - **Respuesta exitosa**:
     ```json
     {
-      "nombre": "Nombre de la Sucursal",
-      "direccion": "Dirección",
-      "franquiciaId": 1
+      "id": 1,
+      "nombre": "Nuevo Nombre"
     }
     ```
 
-- **Obtener todas las sucursales**:
+---
 
-    ```http
-    GET /sucursal
+### Endpoints de SucursalController
+
+- **Agregar una sucursal**
+  - **Método**: `POST`
+  - **Endpoint**: `/franquicias/{franquiciaId}/sucursales`
+  - **Descripción**: Agrega una nueva sucursal a una franquicia específica.
+  - **Cuerpo de la petición**:
+    ```json
+    {
+      "nombre": "Sucursal A",
+      "direccion": "Calle Falsa 123"
+    }
+    ```
+  - **Respuesta exitosa**:
+    ```json
+    {
+      "id": 1,
+      "nombre": "Sucursal A",
+      "direccion": "Calle Falsa 123"
+    }
     ```
 
-  **Respuesta**:
+- **Listar sucursales**
+  - **Método**: `GET`
+  - **Endpoint**: `/franquicias/{franquiciaId}/sucursales`
+  - **Descripción**: Lista todas las sucursales de una franquicia.
+  - **Respuesta**:
     ```json
     [
       {
         "id": 1,
-        "nombre": "Nombre de la Sucursal",
-        "direccion": "Dirección",
-        "franquicia": {
-          "id": 1,
-          "nombre": "Nombre de la Franquicia"
-        }
+        "nombre": "Sucursal A",
+        "direccion": "Calle Falsa 123"
+      },
+      {
+        "id": 2,
+        "nombre": "Sucursal B",
+        "direccion": "Avenida Siempre Viva 742"
       }
     ]
     ```
 
-- **Eliminar una sucursal por ID**:
-
-    ```http
-    DELETE /sucursal/{id}
-    ```
-
-#### Producto (Product)
-
-- **Agregar un nuevo producto**:
-
-    ```http
-    POST /producto
-    ```
-
-  **Cuerpo de la solicitud**:
+- **Actualizar el nombre de una sucursal**
+  - **Método**: `PATCH`
+  - **Endpoint**: `/franquicias/{franquiciaId}/sucursales/{sucursalId}/actualizar-nombre`
+  - **Descripción**: Actualiza el nombre de una sucursal específica.
+  - **Parámetros**:
+    - `sucursalId`: ID de la sucursal.
+    - **Query param**: `nuevoNombre`: El nuevo nombre de la sucursal.
+  - **Respuesta exitosa**:
     ```json
     {
-      "nombre": "Nombre del Producto",
-      "precio": 100.0,
-      "sucursalId": 1
+      "id": 1,
+      "nombre": "Nuevo Nombre",
+      "direccion": "Calle Falsa 123"
     }
     ```
 
-- **Obtener todos los productos**:
+---
 
-    ```http
-    GET /producto
+### Endpoints de ProductoController
+
+- **Agregar un producto a una sucursal**
+  - **Método**: `POST`
+  - **Endpoint**: `/sucursales/{sucursalId}/productos`
+  - **Descripción**: Agrega un nuevo producto a una sucursal específica.
+  - **Cuerpo de la petición**:
+    ```json
+    {
+      "nombre": "Producto A",
+      "precio": 10.5,
+      "stock": 100
+    }
+    ```
+  - **Respuesta exitosa**:
+    ```json
+    {
+      "id": 1,
+      "nombre": "Producto A",
+      "precio": 10.5,
+      "stock": 100
+    }
     ```
 
-  **Respuesta**:
+- **Listar productos de una sucursal**
+  - **Método**: `GET`
+  - **Endpoint**: `/sucursales/{sucursalId}/productos`
+  - **Descripción**: Lista todos los productos de una sucursal específica.
+  - **Respuesta**:
     ```json
     [
       {
         "id": 1,
-        "nombre": "Nombre del Producto",
-        "precio": 100.0,
-        "sucursal": {
-          "id": 1,
-          "nombre": "Nombre de la Sucursal"
-        }
+        "nombre": "Producto A",
+        "precio": 10.5,
+        "stock": 100
+      },
+      {
+        "id": 2,
+        "nombre": "Producto B",
+        "precio": 15.0,
+        "stock": 50
       }
     ]
     ```
 
-- **Actualizar el stock de un producto**:
-
-    ```http
-    PATCH /producto/{id}/stock
-    ```
-
-  **Cuerpo de la solicitud**:
+- **Actualizar stock de un producto**
+  - **Método**: `PATCH`
+  - **Endpoint**: `/sucursales/{sucursalId}/productos/{productoId}/modificar-stock`
+  - **Descripción**: Actualiza el stock de un producto específico.
+  - **Parámetros**:
+    - `sucursalId`: ID de la sucursal.
+    - `productoId`: ID del producto.
+    - **Query param**: `nuevoStock`: El nuevo stock del producto.
+  - **Respuesta exitosa**:
     ```json
     {
-      "stock": 50
+      "id": 1,
+      "nombre": "Producto A",
+      "precio": 10.5,
+      "stock": 120
     }
     ```
 
-- **Eliminar un producto por ID**:
-
-    ```http
-    DELETE /producto/{id}
+- **Eliminar un producto**
+  - **Método**: `DELETE`
+  - **Endpoint**: `/sucursales/{sucursalId}/productos/{productoId}`
+  - **Descripción**: Elimina un producto de una sucursal específica.
+  - **Parámetros**:
+    - `sucursalId`: ID de la sucursal.
+    - `productoId`: ID del producto.
+  - **Respuesta exitosa**:
+    ```json
+    {
+      "message": "Producto eliminado exitosamente"
+    }
     ```
+
+- **Actualizar el nombre de un producto**
+  - **Método**: `PATCH`
+  - **Endpoint**: `/sucursales/{sucursalId}/productos/{productoId}/actualizar-nombre`
+  - **Descripción**: Actualiza el nombre de un producto específico.
+  - **Parámetros**:
+    - `sucursalId`: ID de la sucursal.
+    - `productoId`: ID del producto.
+    - **Query param**: `nuevoNombre`: El nuevo nombre del producto.
+  - **Respuesta exitosa**:
+    ```json
+    {
+      "id": 1,
+      "nombre": "Nuevo Nombre",
+      "precio": 10.5,
+      "stock": 100
+    }
+    ```
+
+
 
 
